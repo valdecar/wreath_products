@@ -72,6 +72,9 @@ Do not forget that this only prove that $D_{4}\wr S_{2}$ is SR group because $D_
 # 16*|H|^2 + |H| + 2 digital multiplications
 ```
 
+##### Others
+There is also some useful functions in a file `sketch.txt` one can use for representations of groups.
+
 ##### References:
 
 1. M. Hamermesh, Group Theory and its Application to Physical Problems, Dover Books on Physics and Chemistry, Reprint edition.
