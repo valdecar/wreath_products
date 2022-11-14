@@ -1,0 +1,242 @@
+# regular representation:
+gap> c3:=Group((1,2),(1,3),(2,3),(1,2,3));
+# beter use all element as generators, so RegularModule would return
+# representation for all elements
+gap> c3:=Group([ (), (1,3), (1,2,3), (2,3), (1,3,2), (1,2) ])
+gap> r:=RegularModule(c3,GF(7));
+gap> List([1..6],i->List((r[2].("generators")[i]),e->List(e,ee->IntFFE(ee))));
+
+
+##############
+
+tetraeder group:
+
+gap> tetr:=Group( [ (1,2)(3,4), (1,4)(2,3), (2,3,4) ] );
+gap> tbl:=CharacterTable(tetr);
+gap> First(Irr(tbl),e->e[1]=3);
+gap> hom:=IrreducibleRepresentationsDixon(tetr,last:unary);
+[ (1,2)(3,4), (1,4)(2,3), (2,3,4) ] -> 
+[ [ [ -1, 0, 0 ], [ 0, 1, 0 ], [ 0, 0, -1 ] ], 
+  [ [ -1, 0, 0 ], [ 0, -1, 0 ], [ 0, 0, 1 ] ], 
+  [ [ 0, 0, -1 ], [ 1, 0, 0 ], [ 0, -1, 0 ] ] ]
+
+
+gap> List(ConjugacyClasses(tetr),Representative);
+[ (), (1,2)(3,4), (1,2,3), (1,2,4) ]
+gap> for g in last do Print(g,"\n",Image(hom, g), "\n"); od;
+()
+[ [ 1, 0, 0 ], [ 0, 1, 0 ], [ 0, 0, 1 ] ]
+(1,2)(3,4)
+[ [ -1, 0, 0 ], [ 0, 1, 0 ], [ 0, 0, -1 ] ]
+(1,2,3)
+[ [ 0, 1, 0 ], [ 0, 0, 1 ], [ 1, 0, 0 ] ]
+(1,2,4)
+[ [ 0, 0, 1 ], [ -1, 0, 0 ], [ 0, -1, 0 ] ]
+
+KroneckerProduct(mat1, mat2);
+
+gap> mg:=Group(List(GeneratorsOfGroup(tetr),g->Image(hom,g)));
+gap> Orbits(mg,[[1,2,3]]);
+
+gap> Orbits(mg,[[1,2,3]]);
+[ [ [ 1, 2, 3 ], [ -1, 2, -3 ], [ -1, -2, 3 ], [ -2, 3, -1 ], 
+      [ 1, -2, -3 ], [ -2, -3, 1 ], [ 2, 3, 1 ], [ 2, -3, -1 ], 
+      [ -3, -1, 2 ], [ 3, 1, 2 ], [ -3, 1, -2 ], [ 3, -1, -2 ] ] ]
+
+# this is entirely different (not what We need here):
+gap> InvariantLattice(mg);
+[ [ 1, 0, 0 ], [ 0, 1, 0 ], [ 0, 0, 1 ] ]
+
+-----------------------------------
+
+gap> mats:=[[[1, 0, 0, 0],[0,1,0,0],[0,0,1,0],[0,0,0,1]],];
+gap> Add(mats, [[E(3)^2,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,E(3)]]);
+gap> Add(mats, [[E(3),0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,E(3)^2]]);
+gap> Add(mats, [[0,0,0,1],[0,0,1,0],[0,1,0,0],[1,0,0,0]]);
+gap> Add(mats, [[0,0,0,E(3)],[0,0,1,0],[0,1,0,0],[E(3)^2,0,0,0]]);
+gap> Add(mats, [[0,0,0,E(3)^2],[0,0,1,0],[0,1,0,0],[E(3),0,0,0]]);
+
+gap> mg1:=Group(mats);
+gap> Orbits(mg1,[[[1,0,0,0]],[[0,1,0,0]],[[0,0,1,0]],[[0,0,0,1]]],OnSets); 
+[ [ [ [ 1, 0, 0, 0 ] ], [ [ E(3)^2, 0, 0, 0 ] ], [ [ E(3), 0, 0, 0 ] ], 
+      [ [ 0, 0, 0, 1 ] ], [ [ 0, 0, 0, E(3) ] ], 
+      [ [ 0, 0, 0, E(3)^2 ] ] ], 
+  [ [ [ 0, 0, 1, 0 ] ], [ [ 0, 1, 0, 0 ] ] ] ]
+gap> 
+------------------------------------------
+gap> mats:=List(tetr, e->KroneckerProduct(Image(hom, e),Image(hom, e)));
+gap> mg2:=Group(mats);
+gap> Orbits(mg2,[[[1,0,0,0, 0, 0,0,0,0]],[[0,1,0,0,0,0,0,0,0]],[[0,0,1,0,0,0,0,0,0]],[[0,0,0,1,0,0,0,0,0]],[[0,0,0,0,1,0,0,0,0]],[[0,0,0,0,0,1,0,0,0]],[[0,0,0,0,0,0,1,0,0]],[[0,0,0,0,0,0,0,1,0]],[[0,0,0,0,0,0,0,0,1]]],OnSets);
+[ [ [ [ 1, 0, 0, 0, 0, 0, 0, 0, 0 ] ], [ [ 0, 0, 0, 0, 1, 0, 0, 0, 0 ] ]
+        , [ [ 0, 0, 0, 0, 0, 0, 0, 0, 1 ] ] ], 
+  [ [ [ 0, 0, 0, 0, 0, 0, 0, 1, 0 ] ], 
+      [ [ 0, 0, 0, 0, 0, 0, 0, -1, 0 ] ], 
+      [ [ 0, 0, -1, 0, 0, 0, 0, 0, 0 ] ], 
+      [ [ 0, 0, 1, 0, 0, 0, 0, 0, 0 ] ], 
+      [ [ 0, 0, 0, -1, 0, 0, 0, 0, 0 ] ], 
+      [ [ 0, 0, 0, 1, 0, 0, 0, 0, 0 ] ] ], 
+  [ [ [ 0, 0, 0, 0, 0, 0, 1, 0, 0 ] ], 
+      [ [ 0, 0, 0, 0, 0, 0, -1, 0, 0 ] ], 
+      [ [ 0, 1, 0, 0, 0, 0, 0, 0, 0 ] ], 
+      [ [ 0, -1, 0, 0, 0, 0, 0, 0, 0 ] ], 
+      [ [ 0, 0, 0, 0, 0, -1, 0, 0, 0 ] ], 
+      [ [ 0, 0, 0, 0, 0, 1, 0, 0, 0 ] ] ] ]
+gap> Length(last);
+3
+
+gap> Eigenspaces(1,a);
+
+##############################
+gap> orders:=List([5..100],e->[2*e, 2*(2*e)^2]);
+gap> wdih:=n->WreathProduct(dih(n), Group((1,2)));
+gap> dih:= n->DihedralGroup(n)
+gap> clwdih:=n->ConjugacyClassesSubgroups(wdih(n));
+gap> function(m, n)return(Filtered(Filtered(clwdih(n),cl->Size(Representative(cl))=m),ee->(wdih(m) in ee)));end;
+
+################
+
+gap> List(DerivedSeries(w4), Size);
+
+gap> f:=n->kolesnikov_right(DihedralGroup(n))-kolesnikov_left(DihedralGroup(n));
+
+gap> List([10,12,14,16,18,20],f);
+[ 2400, 10368, 14112, 49152, 46656, 153600 ]
+
+gap> List([22,24,26,28,30,32],f);
+[ 116160, 359424, 243360, 733824, 453600, 1327104 ]
+
+
+########################
+gap> w1:=WreathProduct(s2,s2);
+gap> w2:=WreathProduct(s4,s2);
+gap> cl_w2:=ConjugacyClassesSubgroups(w2);
+gap> cl_w2_filt:=Filtered(cl_w2, e->Size(Representative(e))=8);
+gap> subs_w1_in_w2:=Filtered(cl_w2_filt, e->(w1 in e));
+gap> is_SR(Representative(subs_w1_in_w2[1]));
+true
+#######################
+gap> a5:= AlternatingGroup( 5 );
+Alt( [ 1 .. 5 ] )
+gap> char:= First( Irr( a5 ), x -> x[1] = 4 );
+Character( CharacterTable( Alt( [ 1 .. 5 ] ) ), [ 4, 0, 1, -1, -1 ] )
+gap> hom:=IrreducibleRepresentationsDixon( a5, char: unitary );;
+gap> Order( a5.1*a5.2 ) = Order( Image( hom, a5.1 )*Image( hom, a5.2 ) );
+true
+gap> reps:= List( ConjugacyClasses( a5 ), Representative );;
+gap> List( reps, g -> TraceMat( Image( hom, g ) ) );
+[ 4, 0, 1, -1, -1 ]
+
+#######################################
+# S4sS2 solvable but not SR
+
+ w:=WreathProduct(DihedralGroup(14),s2); 
+not SR
+but solvable
+
+w:=WreathProduct(DihedralGroup(26),s2);
+not SR
+but solvable
+
+gap> (26^4)*4;
+1827904
+gap> (26^3);
+17576
+gap> (26^4)*4/last;
+104
+
+
+#####################
+DerivedSeriesOfGroup( G ) ──────────────────────────────── attribute
+  
+  The  derived series of a group is obtained by U_{i+1} = U_i'. It stops
+  if U_i is perfect.
+  
+  39.17-8 DerivedLength
+  
+  ‣ DerivedLength( G ) ─────────────────────────────────────── attribute
+  
+  The  derived  length  of a group is the number of steps in the derived
+  series.  (As  there is always the group, it is the series length minus
+  1.)
+  
+  ─────────────────────────────  Example  ──────────────────────────────
+    gap> List(DerivedSeriesOfGroup(g),Size);
+    [ 24, 12, 4, 1 ]
+    gap> DerivedLength(g);
+    3
+IsSolvableGroup( G ) ────────────────────────────────────── property
+  
+  A  group  is  solvable if the derived series (see DerivedSeriesOfGroup
+  (39.17-7)  for  a definition) reaches the trivial subgroup in a finite
+  number of steps.
+  
+  For   finite   groups   this   is   the   same   as  being  polycyclic
+  (see IsPolycyclicGroup   (39.15-7)),  and  each  polycyclic  group  is
+  solvable,  but  there  are  infinite  solvable  groups  that  are  not
+  polycyclic.
+  
+  39.15-7 IsPolycyclicGroup
+  
+  ‣ IsPolycyclicGroup( G ) ──────────────────────────────────── property
+  
+  A  group  is  polycyclic  if  it  has  a  subnormal series with cyclic
+  factors.  For  finite  groups  this  is  the  same  as if the group is
+  solvable (see IsSolvableGroup 
+
+ IsSupersolvableGroup( G ) ───────────────────────────────── property
+  
+  A  finite group is supersolvable if it has a normal series with cyclic
+  factors.
+
+##########
+HasIrr
+
+gap> ns:=NormalSubgroups(w);
+
+gap> a:=AbelianGroup(IsPermGroup, [1,2,3]);
+gap> au:=AutomorphismGroup(a);
+gap> tmp:=AllSubgroups(au)[2];
+gap> g:=GeneratorsOfGroup(tmp)[1];
+gap> hom:=GroupHomomorphismByImages(s2, tmp, [(1,2)],[g]);
+gap> sem:=SemidirectProduct(s2, hom, a);
+gap> sigma:=Image(hom, (1,2));
+gap> Image(sigma, (3,4,5));
+gap> (3,4,5)*(3,5,4)
+()
+gap> (3,5,4) in a;
+
+##############
+
+gap> subs2:=Filtered(subsc, elm->Size(elm[1])=2);
+gap> subsc:=ConjugacyClassesSubgroups(au);
+gap> au:=AutomorphismGroup(S4xA5);
+gap> hom:=GroupHomomorphismByImages(s2, subs2[1][1], [(1,2)], GeneratorsOfGroup(subs2[1][1]));
+[ (1,2) ] -> [ ^(1,2)(3,4) ]
+
+
+##############
+SubgroupByProperty(G, prop)
+
+OnSets([1,5],(1,3,5)(2,4,6));
+
+
+read("atlas.g");
+g :=extract_atlas_groups();
+fg :=Filtered(g,elm->elm[2]<1000);
+tbl:=CharacterTable(fg[4][1]);
+List(Irr(tbl),elm->elm!.ValuesOfClassFunction);
+
+AllSmallNonabelianSimpleGroups([1...1000]);
+
+# return C3v group
+g1:=SmallGroup(6,1);
+
+a:=KnownPropertiesOfObject(g1);
+b:=KnownTruePropertiesOfObject(g1);
+Difference(a, b);
+Union(a,b)
+Intersect(a, b)
+Apply(list, func)
+
+# max size:
+2048 s[70] in test1(17)
