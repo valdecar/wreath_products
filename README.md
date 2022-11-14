@@ -74,6 +74,7 @@ Do not forget that this only prove that $D_{4}\wr S_{2}$ is SR group because $D_
 
 ##### Others
 There is also some useful functions in a file `sketch.txt` one can use for representations of groups.
+There is some useful methods to build the representation of a group in the `SageMath`  in a file `notebooks/representation.ipynb`. 
 
 ##### References:
 
